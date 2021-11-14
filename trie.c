@@ -44,9 +44,8 @@ Trie * trie_add(Trie * trie, char * word, int len)
             cur->next[ind] = trie_alloc();
             cur->next[ind]->v = word[i];
             cur->next[ind]->parent = cur;
+            cur->next_count++;
         }
-
-        cur->next_count++;
         cur = cur->next[ind];
     }
 
@@ -121,4 +120,19 @@ Trie * trie_remove(Trie * trie, char * word, int len)
     }
     
     return trie;
+}
+
+void trie_free(Trie * trie)
+{
+    while (trie != NULL) {
+        if (trie->next_count > 0) {
+            for (int i = 0; i < 256; i++) {
+                if (trie->next[i] != NULL) {
+                    trie_free(trie->next[i]);
+                }
+            }
+        }
+
+        free(trie);
+    }
 }
